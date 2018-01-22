@@ -2,33 +2,17 @@
 
 // Befehle werden sequenziell abgearbeitet ...
 
-
-/**
- * Geo taggint object
- * @param latitude
- * @param longitude
- * @param name
- * @param hashtag
- * @constructor
- */
-function GeoTag(latitude, longitude, name, hashtag) {
-    this.latitude = latitude;
-    this.longitude = longitude;
-    this.name = name;
-    this.hashtag = hashtag;
-}
 /**
  * "console.log" schreibt auf die Konsole des Browsers
  * Das Konsolenfenster muss im Browser explizit geöffnet werden.
  */
+console.log("The script is going to start...");
+
 // Es folgen einige Deklarationen, die aber noch nicht ausgeführt werden ...
 
 /**
  * GeoTagApp Locator Modul
  */
-var curLat = null;
-var curLon = null;
-
 var gtaLocator = (function GtaLocator() {
 
     // Private Member
@@ -57,7 +41,6 @@ var gtaLocator = (function GtaLocator() {
                         msg = "An unknown error occurred.";
                         break;
                 }
-                console.log(error);
                 onerror(msg);
             });
         } else {
@@ -75,154 +58,156 @@ var gtaLocator = (function GtaLocator() {
         return position.coords.longitude;
     };
 
-    var getLocationMapSrc = function (lat, lon, taglist) {
+    // Hier Google Maps API Key eintragen
+    var apiKey = "AIzaSyABAw85MYEd0e1TO9pU6cxsSL5MG6DxykY";
 
-        var map;
-        var bounds = new google.maps.LatLngBounds();
+    /**
+     * Funktion erzeugt eine URL, die auf die Karte verweist.
+     * Falls die Karte geladen werden soll, muss oben ein API Key angegeben
+     * sein.
+     *
+     * lat, lon : aktuelle Koordinaten (hier zentriert die Karte)
+     * tags : Array mit Geotag Objekten, das auch leer bleiben kann
+     * zoom: Zoomfaktor der Karte
+     */
+    var getLocationMapSrc = function (lat, lon, tags, zoom) {
+        zoom = typeof zoom !== 'undefined' ? zoom : 10;
 
-        // Display a map on the page
-        map = new google.maps.Map(document.getElementById('googleMap'));
-        map.setTilt(45);
-        //adds current Potiton
-
-
-        // Display multiple markers on a map
-        var infoWindow = new google.maps.InfoWindow(), marker, i;
-
-        // Loop through our array of markers & place each one on the map
-        for (i = 0; i < taglist.length; i++) {
-            var position = new google.maps.LatLng(taglist[i].latitude, taglist[i].longitude);
-            bounds.extend(position);
-            marker = new google.maps.Marker({
-                position: position,
-                map: map,
-                title: taglist[i].name
-            });
-
-
-            // Allow each marker to have an info window
-            google.maps.event.addListener(marker, 'click', (function (marker, i) {
-                return function () {
-                    infoWindow.setContent(taglist[i].name);
-                    infoWindow.open(map, marker);
-                }
-            })(marker, i));
-
-            // Automatically center the map fitting all markers on the screen
-            map.fitBounds(bounds);
-
+        if (apiKey === "YOUR API KEY HERE") {
+            console.log("No API key provided.");
+            return "images/mapview.jpg";
         }
 
+        var tagList = "";
+        if (typeof tags !== 'undefined') tags.forEach(function (tag) {
+            tagList += "&markers=%7Clabel:" + tag.name
+                + "%7C" + tag.latitude + "," + tag.longitude;
+        });
 
-        map.fitBounds(bounds);
-        map.panToBounds(bounds);
+        var urlString = "http://maps.googleapis.com/maps/api/staticmap?center="
+            + lat + "," + lon + "&markers=%7Clabel:you%7C" + lat + "," + lon
+            + tagList + "&zoom=" + zoom + "&size=640x480&sensor=false&key=" + apiKey;
 
+        console.log("Generated Maps Url: " + urlString);
+        return urlString;
     };
 
     return { // Start öffentlicher Teil des Moduls ...
 
+        // Public Member
 
-        init: function () {
+        readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
-            tryLocate(function (position) {
-                curLat = getLatitude(position);
-                curLon = getLongitude(position);
-                $("#latitude").val(curLat);
-                $("#longitude").val(curLon);
-                getList();
+        update: function () {
+            var tagging_form = {
+                lat : $('#tagging_latitude'),
+                lon : $('#tagging_longitude')
+            };
+            var first_geoTag = {
+                lat : $('ul#results li:first-child span.lat'),
+                lon : $('ul#results li:first-child span.lon')
+            };
+            var map = $('#result-img');
 
-            }, function (msg) {
-                alert(msg);
-            });
+            if( first_geoTag.lat.length > 0){
+                tagging_form.lat.val(first_geoTag.lat.text());
+                tagging_form.lon.val(first_geoTag.lon.text());
 
-        },
+                map.attr('src', getLocationMapSrc(first_geoTag.lat.text(), first_geoTag.lon.text()));
+            } else {
+                tryLocate( function (position) {
+                    tagging_form.lat.val(getLatitude(position));
+                    tagging_form.lon.val(getLongitude(position));
+                    $('#discovery_latitude').val(getLatitude(position));
+                    $('#discovery_longitude').val(getLongitude(position));
 
-        refresh: function (taglist) {
-
-            getLocationMapSrc(curLat, curLon, taglist);
-
-
+                    map.attr('src', getLocationMapSrc(getLatitude(position), getLongitude(position)));
+                }, onerror);
+            }
         }
-// ... Ende öffentlicher Teil
-}})();
 
-function updateList(jsonResponse) {
-    taglist = JSON.parse(jsonResponse);
-    var $discovery = $("#results");
-    $discovery.empty();
-    gtaLocator.refresh(taglist);
-    taglist.forEach(function (gtag) {
-        $discovery.append('<li class=list-group-item >' + gtag.name + ' (' + gtag.latitude + ',' + gtag.longitude + ') ' + gtag.hashtag + ' </li>');
-    });
+    }; // ... Ende öffentlicher Teil
+})();
 
-
-}
-function getList() {
-    var ajax = new XMLHttpRequest();
-    ajax.open("GET", 'http://localhost:3000/geotags', true);
-    ajax.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    ajax.send();
-    ajax.onreadystatechange = function () {
-        if (this.readyState === 4 && this.status === 200) {
-            updateList(this.responseText);
-        }
-    }
-
-
-}
-/**
+/** 4.0.0 sezten / reg der EventListner
  * $(document).ready wartet, bis die Seite komplett geladen wurde. Dann wird die
  * angegebene Funktion aufgerufen. An dieser Stelle beginnt die eigentliche Arbeit
  * des Skripts.
  */
-
 $(document).ready(function () {
-    gtaLocator.init();
+    gtaLocator.update();
 
-    $("#tag-form").submit( function () {
-        event.preventDefault();
-        lat = document.getElementById("latitude").value;
-        lon = document.getElementById("longitude").value;
-        name = document.getElementById("name").value;
-        hash = document.getElementById("hashtag").value;
+    // Aufgabe 4.2.1 async
+    document.getElementById("tag-button").onclick = function () { sendGeoTag( new GeoTagObject(
+                                                                            $('#tagging_latitude').val(),
+                                                                            $('#tagging_longitude').val(),
+                                                                            $('#name').val(),
+                                                                            $('#hashtag').val())
+                                                                            ) };
 
-        var gt = new GeoTag(lat, lon, name, hash);
-        var ajax = new XMLHttpRequest();
-        ajax.open("POST", "http://localhost:3000/geotags", true);
-        ajax.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        ajax.send(JSON.stringify(gt));
-        document.getElementById("name").value = "";
-        document.getElementById("hashtag").value = "";
-        getList();
-
-    });
-    //listener for search
-    $("#filter-form").submit( function () {
-        event.preventDefault();
-        var term = document.getElementById("searchterm").value;
-        search(term);
-    });
-    //listener for clear
-    document.getElementById("clear").addEventListener("click", function () {
-        search();
-         document.getElementById("searchterm").value = "";
-    });
-
-    function search(term) {
-        var ajax = new XMLHttpRequest();
-        if(term === undefined)
-            ajax.open("GET", 'http://localhost:3000/geotags', true);
-        else
-            ajax.open("GET", 'http://localhost:3000/geotags?search=' + term, true);
-        ajax.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        ajax.send();
-        ajax.onreadystatechange = function () {
-            if (this.readyState === 4 && this.status === 200) {
-                updateList(this.responseText);
-            }
-        }
-    }
-
-
+    document.getElementById("filter-button").onclick = function () { filterGeoTag($ ('#searchterm').val()) };
 });
 
+window.onerror = function (msg) {
+  console.log(msg);
+};
+
+function GeoTagObject(tagging_latitude, tagging_longitude, name, hashtag) {
+    this.latitude = tagging_latitude;
+    this.longitude = tagging_longitude;
+    this.name = name;
+    this.hashtag = hashtag;
+}
+
+
+// Teilaufgabe 4.2.1 tag formular
+
+function sendGeoTag( geoTagObject ) {
+
+    var ajax = new XMLHttpRequest();
+
+    // EventListner
+    ajax.onreadystatechange = function() {
+
+        // readyState returns the state an XMLHttpRequest clients is in. 4 equals "the operation is complete
+        if (ajax.readyState === 4) {
+            console.log("Sending this to server:");
+            console.log(geoTagObject);
+
+        }
+    };
+
+    // send data via http post in json to server
+    ajax.open("POST", "/tagging", true);
+    ajax.setRequestHeader("Content-type", "application/json");
+
+    // transform to JSON
+    ajax.send(JSON.stringify(geoTagObject));
+    $('#results').load(document.URL +  ' #results');
+
+}
+
+// Teilaufgabe 4.2.1 filter formular
+function filterGeoTag( searchterm ) {
+
+    var ajax = new XMLHttpRequest();
+
+    if(searchterm === undefined){
+        searchterm = "";
+    }
+
+    var params = "searchterm=" + searchterm;
+
+    // EventListner
+    ajax.onreadystatechange = function() {
+
+        if (ajax.readyState === 4) {
+            console.log("Filtering geoTags with this term \"" + searchterm + "\".");
+        }
+    };
+
+    // http get with query parameter
+    ajax.open("GET", "/discovery"+"?"+params, true);
+    ajax.send(null);
+    $('#results').load("/discovery"+"?"+params +  ' #results');
+}

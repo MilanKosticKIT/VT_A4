@@ -1,71 +1,54 @@
-# 3. Aufgabe - serverseitige Anwendung erstellen
-Die dritte Aufgabe beschäftigt sich mit dem **GTA-Server**. Der GTA-Server verwaltet die GeoTags und bietet dem Client Funktionen zum Abfragen und Hinzufügen. Dabei kann der Server das HTML-Gerüst der App dynamisch aus einem **EJS-Template** erzeugen, um darin die aktuellen GeoTags und Koordinaten einzubetten. Daneben stellt der Server **statische Dateien** zum Abruf per HTTP zur Verfügung. Dazu gehören z.B. Bilder und das clientseitige Skript.
+# 4. Aufgabe - Interaktion per REST und AJAX
+In der vierten Aufgabe sollen die Speicherung und Filterung von GeoTags nun aus dem Browser mittels **Ajax** erfolgen (statt dem Form-Mechanismus) und auf der Serverseite über eine **REST-API** realisiert werden.
 
-Die Aufgabe übt die Programmierung von **Konstruktoren** sowie **Modulen**, **Funktionen** und **Arrays** mit **JavaScript** ein. Zudem werden serverseitige JavaScript-Technologien - insbesondere der Aufbau von **Express Apps**, die Erstellung einfacher **Express Routen**, sowie die Verwendung von **EJS Templates** - vertieft.
+Am Ende soll die Funktionalität der Anwendung identisch erhalten bleiben, nur dass die Interaktion mit dem Server per Ajax wesentlich schneller und ohne störenden Aufbau einer neuen Seite abläuft.
 
-## 3.1. Vorbereitung
-Aktualisieren Sie zunächst das Github Repository [https://github.com/zirpins/vs1lab](https://github.com/zirpins/vs1lab). 
-Dann gehen Sie wie folgt vor:
+Die Aufgabe vertieft die Programmierung von **Event-Listenern** sowie die Verwendung der **XMLHttpRequest API** in Javascript. Zudem wird die **Struktur von REST APIs** sowie deren Umsetzung mit dem **HTTP-Protokoll** über **Express Routen** in Javascript eingeübt.
 
-### 3.1.1 Vorherige Lösungen übernehmen
-1. Kopieren Sie die Datei `Aufgabe1/gta_v1/public/stylesheets/style.css` aus Aufgabe 1 nach `Aufgabe3/gta_v3/public/stylesheets/style.css`.
-2. Kopieren Sie die Datei `Aufgabe2/gta_v2/public/javascripts/geotagging.js` aus Aufgabe 2 nach `Aufgabe3/gta_v3/public/javascripts/geotagging.js`.
+## 4.1. Vorbereitung
+Aktualisieren Sie zunächst das Repository auf ihrem Entwicklungsrechner. Die Dateien der Aufgabe liegen im Ordner `Aufgabe4`.
 
-### 3.1.2 EJS Template aus HTML-Dokument ableiten
-1. Öffnen sie `Aufgabe3/gta_v3/views/gta.ejs` in ihrem **Editor**.
-2. Kopieren sie den Inhalt `Aufgabe2/gta_v2/public/index.html` in die EJS-Datei und **ersetzen** sie die **Beispieleinträge der Discovery-Liste** mit den folgenden Zeilen:
+### 4.1.1 Vorherige Lösungen übernehmen
+1. Kopieren Sie das Stylesheet `Aufgabe1/gta_v1/public/stylesheets/style.css` aus Aufgabe 1 nach `Aufgabe4/gta_v4/public/stylesheets/style.css`.
+2. Kopieren Sie das Client Skript `Aufgabe3/gta_v3/public/javascripts/geotagging.js` aus Aufgabe 3 nach `Aufgabe4/gta_v4/public/javascripts/geotagging.js`.
+3. Kopieren Sie das Server Skript `Aufgabe3/gta_v3/gta-server.js` aus Aufgabe 3 nach `Aufgabe4/gta_v4/gta-server.js`.
+4. Kopieren Sie das EJS-Template `Aufgabe3/gta_v3/views/gta.ejs` aus Aufgabe 3 nach `Aufgabe4/gta_v4/views/gta.ejs`.
 
-```
-    <% if (taglist !== undefined) taglist.forEach(function(gtag) { %>
-    	<li><%= gtag.name %> ( <%= gtag.latitude %>,<%= gtag.longitude %>) <%= gtag.hashtag %> </li>
-    <% }); %>
-```
+### 4.1.2 Node-js vorbereiten
+1. Führen sie `npm install` im Verzeichnis `Aufgabe4/gta_v4/` aus, um die nötigen Module zu laden und zu installieren.
+2. Um die App später zu starten führen sie `npm start` im Verzeichnis `Aufgabe4/gta_v4/` aus und öffnen sie [http://localhost:3000](http://localhost:3000) im **Browser**.
 
-### 3.1.3 Node-js vorbereiten
-1. Führen sie `npm install` im Verzeichnis `Aufgabe3/gta_v3/` aus, um die nötigen Module zu laden und zu installieren.
-2. Um die App später zu starten, führen sie `npm start` im Verzeichnis `Aufgabe3/gta_v3/` aus und öffnen sie [http://localhost:3000](http://localhost:3000) im **Browser**.
+## 4.2. Teilaufgaben
+Die Umstellung auf Ajax Aufrufe und REST Schnittstelle betrifft Client- und Serverseite.
 
-## 3.2. Teilaufgaben
+### 4.2.1 Clientseite (Browser)
+Für den Ajax Aufruf im Browser müssen Sie ihr Javascript `Aufgabe4/gta_v4/public/javascripts/geotagging.js` weiter anpassen.
 
-Die Aufgabe besteht nun in der Entwicklung der Serverskripte. Die Clientseite (Browserskript) muss nur leicht angepasst werden. Optional erfordert die Darstellung einer Karte mit Markern noch eine Erweiterung.
+#### Auswertung der Formulare ändern
+Die Formulare für die Eingabe und das Filtern von Tags können grundsätzlich beibehalten werden, jedoch soll jeweils beim Klicken des Buttons ein Ajax Aufruf erfolgen. Hierzu müssen Sie beim Laden der Seite Event-Listener erstellen und registrieren. Dies sollte direkt nach dem Laden einer Seite erfolgen.
 
-### 3.2.1 Implementierung des Servers
+Um das standardmäßige Absenden der Formulare zu verhindern, kann ein anderer Button-Typ verwendet werden (im EJS-Template für die `button`- Elemente `type`-Attribut `submit` durch `button` ersetzen).
 
-Der Server besteht in dieser Aufgabe aus einem **Express.js** Serverskript zur Verarbeitung von HTTP-Requests und einem **EJS Template** zur dynamischen Erzeugung von neuen HTML-Seitendarstellungen. EJS ist dabei zu Beginn noch nicht unbedingt erforderlich (kommt in Vorlesung 6).
+#### Ajax Aufrufe hinzufügen
+Der Ajax Aufruf soll mit dem XMLHttpRequest Objekt realisiert werden (siehe entsprechende Folien).
 
-#### 3.2.1.a Serverskript fertigstellen
+- Für das Tagging Formular soll der Aufruf asynchron ablaufen und die Daten per HTTP POST in JSON Format an den Server senden.
+    - Tipp 1: Sie können hier den serverseitigen GeoTag Konstruktor aus Aufgabe 3 clientseitig wiederverwenden.
+    - Tipp 2: spezifizieren sie einen JSON MIME-Typ im HTTP-Header `Content-Type`, damit der Server den Inhalt erkennt.
+- Für das Filter Formular soll der Aufruf auch asynchron ablaufen aber per HTTP GET mit Query Parametern erfolgen.
 
-Die erste (und umfangreichste) Teilaufgabe besteht in der Vervollständigung einzelner Teile im Serverskript `Aufgabe3/gta_v3/gta-server.js`. Die Anforderungen stehen jeweils als Kommentare im Sourcecode. Hier sind auch Hinweise auf relevante Stellen in der Express Dokumentation enthalten. Im einzelnen gibt es folgende Teilaufgaben:
+#### Weitere Funktionen
+Auf der Clientseite muss noch eine Funktion zur Aktualisierung der Darstellung im Discovery-Widget erstellt werden. Diese soll die Ergebnisliste (und optional die Karte) aktualisieren. Die Aktualisierung soll sowohl beim Anlegen eines neuen Filters als auch eines neuen GeoTags erfolgen.
 
-- Backend Funktionen zur Verwaltung von GeoTags
-    - Einen **Konstruktor für GeoTag Objekte** erstellen
-    - Ein Modul für die **Speicherung und Suche von GeoTag Objekten** erstellen
-- Server Endpunkte
-    - **Statische Dateien** bereitstellen
-    - Die **1. Route** `/` zur **Erzeugung der Einstiegsseite** ist vorgegeben (hier sieht man, wie mit EJS eine HTML-Seite erzeugt wird)
-    - Eine **2. Route** `/tagging` zur **Speicherung von GeoTags** erstellen
-    - Eine **3. Route** `/discovery` zur **Abfrage von GeoTags** erstellen
+### 4.2.2 Serverseite (Node.js)
+Für die REST-Schnittstelle auf der Serverseite kann das Skript `gta-server.js` weiterentwickelt werden. Hier müssen neue Routen für die Ajax Aufrufe erstellt werden (die bisherigen Routen können dabei beibehalten werden).
 
-#### 3.2.1.a Server Template erweitern
+#### Neue Routen der REST Schnittstelle
+In einer REST-konformen API besitzen Ressourcen eines Typs (also z.B. GeoTag) oft eine sog. *Container-Ressource*, die im URI-Pfad nach dem Plural der Ressource benannt ist (also z.b. `/geotags`). Das Erzeugen einer neuen Ressourcen-Instanz erfolgt dann per HTTP POST auf die Adresse der Container Ressource. Das Auslesen aller Ressourcen-Instanzen erfolgt durch HTTP GET auf die Adresse der Container Ressource. Realisieren sie zwei entsprechende Routen.
 
-Die Routen im Serverskript verwenden das EJS-Template `Aufgabe3/gta_v3/views/gta.ejs`, um die nächste Sicht der Browser-GUI als HTML-Dokument zu erstellen. EJS-Direktiven zur Füllung der Ergebnisliste haben wir darin schon vorbereitet (siehe 3.1.2).
+Einzelne Ressourcen-Instanzen sind in einer REST-API über eine individuelle URI direkt zugreifbar. Diese Adresse folgt oft dem Schema `<Container-Ressource>/<Ressourcen-ID>` (also z.B. `geotags/123`). Beim Erzeugen einer neuen Ressourcen-Instanz per HTTP POST sollte am Ende deren URI im `Location` HTTP-Header zurückgesendet werden. Der HTTP Response Code ist `201` (Created).
 
-**Aufgabe:** Ergänzen sie nun noch EJS-Direktiven, um in die entsprechenden Eingabefelder im Tagging- und Filter-Formular `value`-Attribute für die aktuellen Koordinatenwerte einzusetzen. Die Koordinatenwerte müssen sie dazu aus dem Skript an das Template übergeben (Bei der Anfrage liefert der Client seine aktuellen Koordinaten immer als Formularfelder mit).
+Sie sollten auch noch eine Route hinzufügen, die das Auslesen **einzelner** GeoTag-Ressourcen per HTTP GET ermöglicht.
 
-### 3.2.2 Anpassung des Clients 
-
-Wir wollen nun die Client-Implementierung noch etwas optimieren: Die Abfrage der GeoLocation API (jedes Mal nach dem Laden einer Seite) erzeugt eine erhebliche Latenz und stört damit bei wiederholtem Aufruf den Interaktionsfluss. Wir wollen daher die einmal abgerufenen Koordinaten wiederverwenden.
-
-Die Lösung haben wir in der letzten Teilaufgabe schon vorbereitet: Der Server schreibt die Koordinaten, die er beim Aufruf aus den Formularfeldern ausliest, wieder zurück, so dass diese beim nächsten Seitenaufbau im Client schon eingetragen sind. Wir brauchen also in der `updateLocation`-Funktion im `gtaLocator`-Modul nur noch zu testen, ob schon Koordinaten in den Formularfeldern stehen und nur wenn dies *nicht* der Fall ist die GeoLocation API aufrufen.
-
-**Aufgabe:** Erweitern Sie die `updateLocation`-Funktion im `gtaLocator`-Modul des Client-Skripts `Aufgabe3/gta_v3/public/javascripts/geotagging.js`. Lesen sie dort die geeigneten Formularfelder im DOM aus und testen sie, ob schon Koordinaten eingetragen sind. Rufen sie die `tryLocate`-Funktion nur dann auf, wenn es die Situation erfordert.
-
-### 3.2.3 Zusatzaufgabe bei interesse: `data-*`-Attribute und Google Map Marker
-
-Die `getLocationMapSrc`-Funktion im `gtaLocator`-Modul besitzt einen Parameter, dem man einen Array von GeoTag Objekten übergeben kann. Wenn dieser vorliegt, werden an den Positionen der GeoTags Marker in die Karte eingetragen, d.h. die Tags werden auf der Karte sichtbar.
-
-Das Problem ist nun, im Client Skript das Array mit GeoTag Objekten zu bekommen. Diese Information liegt im Server schon vor. Wie aber kommen die Daten zum Client? In der nächsten Aufgabe werden wir zu diesem Zweck AJAX-Abfragen einführen. An dieser Stelle wollen wir noch eine andere Variante kennenlernen:
-
-Der Server kann das Array mit GeoTag Objekten als `data-*`-Attribut einem geeigneten Element beifügen. Erweitern sie dazu das EJS-Template derart, dass es dem `img`-Element der Karte ein `data-tags`-Attribut beifügt. In das Attribut schreiben sie das Array mit GeoTag Objekten als JSON-String. Für ein Array `taglist` erzeugt der Aufruf `JSON.stringify(taglist)` den JSON-String.
-
-Auf der Clientseite können sie dann das Attribut aus dem DOM lesen und den string wieder in ein Array Objekt umwandeln. Für einen JSON-String `taglist_json` erzeugt der Aufruf `JSON.parse(taglist_json)` das korrespondierende JavaScript Array Objekt. Dieses Array Objekt können sie der `getLocationMapSrc`-Funktion als Parameter übergeben.
+#### Verarbeitung von JSON
+Die Vorverarbeitung des HTTP Requests erfolgt mit dem Modul *Bodyparser*. Stellen Sie sicher, dass der Bodyparser (auch) für die Verarbeitung von JSON-Inhalten konfiguriert ist. Der JSON-Inhalt lässt sich dann aus dem [Body des Request Objekts](http://expressjs.com/de/4x/api.html#req.body) entnehmen.
