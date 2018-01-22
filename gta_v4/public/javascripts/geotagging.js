@@ -127,14 +127,39 @@ var gtaLocator = (function GtaLocator() {
 $(document).ready(function () {
     //alert("Hello World")
     // TODO Hier den Aufruf für updateLocation einfügen
+    document.getElementById("submit-button").onclick = function(){ sendGeoTag(new GeoTag($('#hiddenLongitude'),
+                                                                              $('#hiddenLatitude'),
+                                                                              $('#name'),
+                                                                              $('#hashtag')))};
+
 
     var latitude = $("#hiddenLatitude").val();
     var longitude = $("#hiddenLongitude").val();
+
 	//console.log(latitude, longitude);
     if(latitude === "" || longitude === ""){
     	gtaLocator.updateLocation();
     }
-
-    
-    
 });
+
+function sendGeoTag(geoTag){
+    var ajax = new XMLHttpRequest();
+
+    //EventListner
+    ajax.onreadystatechange =function(){
+
+        //readyState returns the state an XMLHttpRequest client is in. 4 == the operation is complete
+        if(ajax.readyState == 4){
+          console.log("Sending this to server:");
+          console.log(geoTag);
+        }
+    }
+    //send data via http post in json to the server
+    ajax.open("POST", "/tagging", true);
+    ajax.setRequestHeader("Content-type", "application");
+
+    //transform to JSON
+    ajax.send(JSON.stringify(geoTag));
+    $('results').load(document.URL + " #results");
+
+}
