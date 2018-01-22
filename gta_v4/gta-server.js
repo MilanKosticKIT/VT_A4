@@ -118,7 +118,7 @@ app.get('/', function (req, res, next) {
         longitude = req.body.longitude;
         latitude = req.body.latitude;
     }
-    res.render("gta.ejs", {
+    res.render("gta", {
         taglist: geoTags,
         latitude: latitude,
         longitude: longitude
