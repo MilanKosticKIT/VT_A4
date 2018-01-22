@@ -104,13 +104,12 @@ var gtaLocator = (function GtaLocator() {
 
 
             tryLocate(function(position) {
-              alert("Test");
-              var newLongitude = getLongitude(position);
-              var newLatitude = getLatitude(position);
-              getElementById("hiddenLongitude").setAttribute("value",newLongitude);
-              getElementById("hiddenLatitude").setAttribute("value",newLatitude);
-              getElementById("longitude").setAttribute("value",newLongitude);
-              getElementById("latitude").setAttribute("value",newLatitude);
+              //alert("Test");
+
+              document.getElementById("hiddenLongitude").setAttribute("value",getLongitude(position));
+              document.getElementById("hiddenLatitude").setAttribute("value",getLatitude(position));
+              document.getElementById("longitude").setAttribute("value",getLongitude(position));
+              document.getElementById("latitude").setAttribute("value",getLatitude(position));
             }, function(message){
               alert(message);
             });
@@ -128,5 +127,14 @@ var gtaLocator = (function GtaLocator() {
 $(document).ready(function () {
     //alert("Hello World")
     // TODO Hier den Aufruf für updateLocation einfügen
-    gtaLocator.updateLocation();
+
+    var latitude = $("#hiddenLatitude").val();
+    var longitude = $("#hiddenLongitude").val();
+	//console.log(latitude, longitude);
+    if(latitude === "" || longitude === ""){
+    	gtaLocator.updateLocation();
+    }
+
+    
+    
 });

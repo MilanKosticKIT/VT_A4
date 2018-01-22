@@ -129,8 +129,12 @@ var InMemoryModul = (function () {
  */
 
 app.get('/', function(req, res) {
+
+
     res.render('gta', {
-        taglist: []
+        taglist: [],
+        latitude:req.body.latitude,
+        longitude:req.body.longitude
     });
 });
 
@@ -161,7 +165,9 @@ console.log(req.body.latitude,
 
       res.render('gta',  {
           taglist: InMemoryModul.geoTagWithinRadius(req.body.latitude,
-             req.body.longitude, 0.5)
+             req.body.longitude, 0.5),
+          latitude:req.body.latitude,
+          longitude:req.body.longitude
       });
   });
 
@@ -181,18 +187,24 @@ console.log(req.body.latitude,
    app.post('/discovery', function(req, res) {
 
 
-	console.log(req.body.searchterm, req.body.hiddenLatitude, 
+	console.log(
+    req.body.searchterm,
+    req.body.hiddenLatitude, 
 		req.body.hiddenLongitude);
 
 
-	if(req.body.searchterm != ""){
+	if(req.body.searchterm){
 		res.render('gta',  {
-          taglist: InMemoryModul.geoTagSearch(req.body.searchterm)
+          taglist: InMemoryModul.geoTagSearch(req.body.searchterm),
+          latitude:req.body.hiddenLatitude,
+          longitude:req.body.hiddenLongitude
       	});
 	}else{
 		res.render('gta',  {
           taglist: InMemoryModul.geoTagWithinRadius(req.body.hiddenLatitude,
-             req.body.hiddenLongitude, 0.5)
+             req.body.hiddenLongitude, 0.5),
+          latitude:req.body.hiddenLatitude,
+          longitude:req.body.hiddenLongitude
         });
 	}
 

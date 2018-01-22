@@ -4,7 +4,7 @@ Die dritte Aufgabe beschäftigt sich mit dem **GTA-Server**. Der GTA-Server verw
 Die Aufgabe übt die Programmierung von **Konstruktoren** sowie **Modulen**, **Funktionen** und **Arrays** mit **JavaScript** ein. Zudem werden serverseitige JavaScript-Technologien - insbesondere der Aufbau von **Express Apps**, die Erstellung einfacher **Express Routen**, sowie die Verwendung von **EJS Templates** - vertieft.
 
 ## 3.1. Vorbereitung
-Aktualisieren Sie zunächst das Github Repository [https://github.com/zirpins/vs1lab](https://github.com/zirpins/vs1lab).
+Aktualisieren Sie zunächst das Github Repository [https://github.com/zirpins/vs1lab](https://github.com/zirpins/vs1lab). 
 Dann gehen Sie wie folgt vor:
 
 ### 3.1.1 Vorherige Lösungen übernehmen
@@ -52,7 +52,7 @@ Die Routen im Serverskript verwenden das EJS-Template `Aufgabe3/gta_v3/views/gta
 
 **Aufgabe:** Ergänzen sie nun noch EJS-Direktiven, um in die entsprechenden Eingabefelder im Tagging- und Filter-Formular `value`-Attribute für die aktuellen Koordinatenwerte einzusetzen. Die Koordinatenwerte müssen sie dazu aus dem Skript an das Template übergeben (Bei der Anfrage liefert der Client seine aktuellen Koordinaten immer als Formularfelder mit).
 
-### 3.2.2 Anpassung des Clients
+### 3.2.2 Anpassung des Clients 
 
 Wir wollen nun die Client-Implementierung noch etwas optimieren: Die Abfrage der GeoLocation API (jedes Mal nach dem Laden einer Seite) erzeugt eine erhebliche Latenz und stört damit bei wiederholtem Aufruf den Interaktionsfluss. Wir wollen daher die einmal abgerufenen Koordinaten wiederverwenden.
 
@@ -68,4 +68,4 @@ Das Problem ist nun, im Client Skript das Array mit GeoTag Objekten zu bekommen.
 
 Der Server kann das Array mit GeoTag Objekten als `data-*`-Attribut einem geeigneten Element beifügen. Erweitern sie dazu das EJS-Template derart, dass es dem `img`-Element der Karte ein `data-tags`-Attribut beifügt. In das Attribut schreiben sie das Array mit GeoTag Objekten als JSON-String. Für ein Array `taglist` erzeugt der Aufruf `JSON.stringify(taglist)` den JSON-String.
 
-Auf der Clientseite können sie dann das Attribut aus dem DOM lesen und den string wieder in ein Array Objekt umwandeln. Für einen JSON-String `taglist_json` erzeugt der Aufruf `JSON.parse(taglist_json)` das korrespondierende JavaScript Array Objekt. Dieses Array Objekt können sie der `getLocationMapSrc`-Funktion als Parameter übergeben.Test
+Auf der Clientseite können sie dann das Attribut aus dem DOM lesen und den string wieder in ein Array Objekt umwandeln. Für einen JSON-String `taglist_json` erzeugt der Aufruf `JSON.parse(taglist_json)` das korrespondierende JavaScript Array Objekt. Dieses Array Objekt können sie der `getLocationMapSrc`-Funktion als Parameter übergeben.
