@@ -127,12 +127,14 @@ var gtaLocator = (function GtaLocator() {
 $(document).ready(function () {
     //alert("Hello World")
     //Aufgabe 4.2.1 async
-    document.getElementById("submit-button").onclick = function(){ sendGeoTag(new GeoTag($('#hiddenLongitude'),
-                                                                              $('#hiddenLatitude'),
-                                                                              $('#name'),
-                                                                              $('#hashtag')))};
+    document.getElementById("submit-button").onclick = function(){ sendGeoTag(new GeoTag($('#longitude').val(),
+                                                                                         $('#latitude' ).val(),
+                                                                                         $('#name'     ).val(),
+                                                                                         $('#hashtag'  ).val())
+                                                                                         )};
 
-    document.getElementById("apply").onclick = function(){filterGeoTag($('#searchterm').val())};
+    //document.getElementById("apply").onclick = function(){filterGeoTag($('#searchterm').val())};
+    document.getElementById("apply").onclick = function(){sendGeoTag(null)};
     var latitude = $("#hiddenLatitude").val();
     var longitude = $("#hiddenLongitude").val();
 
@@ -141,6 +143,14 @@ $(document).ready(function () {
     	gtaLocator.updateLocation();
     }
 });
+
+function GeoTag(longitude, latitude, name, hashtag){
+  this.longitude = longitude;
+  this.latitude = latitude;
+  this.name = name;
+  this.hashtag = hashtag;
+}
+
 
 function sendGeoTag(geoTag){
     var ajax = new XMLHttpRequest();

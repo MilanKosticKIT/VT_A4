@@ -18,8 +18,9 @@ var url = require("url");
 var app;
 app = express();
 app.use(logger('dev'));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-    extended: false
+    extended: true
 }));
 
 // Setze ejs als View Engine
@@ -32,6 +33,7 @@ app.set('view engine', 'ejs');
 
 // TODO: CODE ERGÄNZEN
 app.use(express.static(__dirname + "/public"));
+app.use('/geotags', express.static("public/"));
 
 /**
  * Konstruktor für GeoTag Objekte.
@@ -131,6 +133,16 @@ var InMemoryModul = (function () {
 
 app.get('/', function(req, res) {
 
+  app.get("/geotags/:id", function(req, res) {
+      if( !geoTagModule.getGeoTagObjectAt(req.params.id) ){
+          res.status(404);
+          res.render("gta.ejs", {taglist : geoTagModule.getGeoTagObject()});
+      } else {
+          res.status(200);
+          res.render("gta.ejs", {taglist : geoTagModule.getGeoTagObjectAt(req.params.id)});
+      }
+
+  });
 
     res.render('gta', {
         taglist: [],
@@ -156,7 +168,14 @@ app.get('/', function(req, res) {
 
 
   app.post('/tagging', function(req, res) {
-    InMemoryModul.addGeoTag (new GeoTag(req.body.latitude,
+    GeoTagModule.addGeoTag(new GeoTag(req.body.latitude,
+                                      req.body.longitude,
+                                      req.body.name,
+                                      req.body.hashtag));
+    res.status(201);
+    res.location('/geotags/' + geoTagModule.getGeoTagObject().length);
+    res.render("gta.ejs", {taglist : geoTagModule.getGeoTagObject()});
+    /*InMemoryModul.addGeoTag(new GeoTag(req.body.latitude,
        req.body.longitude, req.body.name,
        req.body.hashtag));
 
@@ -169,7 +188,7 @@ console.log(req.body.latitude,
              req.body.longitude, 0.5),
           latitude:req.body.latitude,
           longitude:req.body.longitude
-      });
+      });*/
   });
 
 
@@ -188,7 +207,7 @@ console.log(req.body.latitude,
    app.get('/discovery', function(req, res) {
      var query = url.parse(req.url, true).query;
      console.log(query);
-
+     res.status(201);
      if(query["searchterm"] != ""){
    		res.render('gta',  {
              taglist: InMemoryModul.geoTagSearch(query["searchterm"]),
