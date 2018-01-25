@@ -161,5 +161,27 @@ function sendGeoTag(geoTag){
     //transform to JSON
     ajax.send(JSON.stringify(geoTag));
     $('results').load(document.URL + " #results");
-
 }
+
+  //Teilaufgabe 4.2.1 filter formular
+  function filterGeoTag(searuchterm) {
+    var ajax = new XMLHttpRequest();
+
+    if(searchterm == undefined){
+      searchterm = "";
+    }
+
+    var params = "searchterm = " + searuchterm;
+
+    //EventListener
+    ajax.onreadystatechange = function() {
+      if (ajax.readyState === 4) {
+        console.log("Filtering geoTags wirh this term\" "+ searchterm + "\".");
+      }
+    }
+
+    //http get with query Parameter
+    ajax.open("GET", "/discovery" + "?" + params, true);
+    ajax.send(null);
+    $('#results').load("/discovery" + "?" + params + '#results');
+  }
