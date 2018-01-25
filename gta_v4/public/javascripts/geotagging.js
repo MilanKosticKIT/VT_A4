@@ -126,13 +126,13 @@ var gtaLocator = (function GtaLocator() {
  */
 $(document).ready(function () {
     //alert("Hello World")
-    // TODO Hier den Aufruf für updateLocation einfügen
+    //Aufgabe 4.2.1 async
     document.getElementById("submit-button").onclick = function(){ sendGeoTag(new GeoTag($('#hiddenLongitude'),
                                                                               $('#hiddenLatitude'),
                                                                               $('#name'),
                                                                               $('#hashtag')))};
 
-
+    document.getElementById("apply").onclick = function(){filterGeoTag($('#searchterm').val())};
     var latitude = $("#hiddenLatitude").val();
     var longitude = $("#hiddenLongitude").val();
 

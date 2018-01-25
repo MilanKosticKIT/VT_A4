@@ -189,7 +189,7 @@ console.log(req.body.latitude,
 
 	console.log(
     req.body.searchterm,
-    req.body.hiddenLatitude, 
+    req.body.hiddenLatitude,
 		req.body.hiddenLongitude);
 
 
