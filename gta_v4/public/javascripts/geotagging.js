@@ -59,7 +59,7 @@ var gtaLocator = (function GtaLocator() {
     };
 
     // Hier Google Maps API Key eintragen
-    var apiKey = "YOUR API KEY HERE";
+    var apiKey = "AIzaSyABAw85MYEd0e1TO9pU6cxsSL5MG6DxykY";
 
     /**
      * Funktion erzeugt eine URL, die auf die Karte verweist.
@@ -133,8 +133,7 @@ $(document).ready(function () {
                                                                                          $('#hashtag'  ).val())
                                                                                          )};
 
-    //document.getElementById("apply").onclick = function(){filterGeoTag($('#searchterm').val())};
-    document.getElementById("apply").onclick = function(){sendGeoTag(null)};
+    document.getElementById("apply").onclick = function(){filterGeoTag($('#searchterm').val())};
     var latitude = $("#hiddenLatitude").val();
     var longitude = $("#hiddenLongitude").val();
 
@@ -144,9 +143,9 @@ $(document).ready(function () {
     }
 });
 
-function GeoTag(longitude, latitude, name, hashtag){
-  this.longitude = longitude;
+function GeoTag(latitude, longitude, name, hashtag ) {
   this.latitude = latitude;
+  this.longitude = longitude;
   this.name = name;
   this.hashtag = hashtag;
 }
@@ -166,11 +165,11 @@ function sendGeoTag(geoTag){
     };
     //send data via http post in json to the server
     ajax.open("POST", "/tagging", true);
-    ajax.setRequestHeader("Content-type", "application");
+    ajax.setRequestHeader("Content-type", "application/json");
 
     //transform to JSON
     ajax.send(JSON.stringify(geoTag));
-    $('results').load(document.URL + " #results");
+    $('#results').load(document.URL + ' #results');
 }
 
   //Teilaufgabe 4.2.1 filter formular
@@ -192,5 +191,5 @@ function sendGeoTag(geoTag){
     //http get with query Parameter
     ajax.open("GET", "/discovery" + "?" + params, true);
     ajax.send(null);
-    $('#results').load("/discovery" + "?" + params + '#results');
+    $('#results').load("/discovery"+"?"+params + ' #results');
   }

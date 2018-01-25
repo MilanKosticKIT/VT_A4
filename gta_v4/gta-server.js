@@ -112,10 +112,19 @@ var InMemoryModul = (function () {
           geoTagsArray.splice(i,1);
         }
       }
+    },
 
+    getGeoTag : function(){
+      return geoTagsArray;
+    },
 
-
+    getGeoTagAt : function (id){
+      if(id >= geoTagsArray.length || id < 0){
+        return false;
+      }
+      return [geoTagsArray[id]];
     }
+
 
   };
 })();
@@ -131,24 +140,26 @@ var InMemoryModul = (function () {
  * Als Response wird das ejs-Template ohne Geo Tag Objekte gerendert.
  */
 
+var inMemoryModule = InMemoryModul;
+
 app.get('/', function(req, res) {
-
-  app.get("/geotags/:id", function(req, res) {
-      if( !geoTagModule.getGeoTagObjectAt(req.params.id) ){
-          res.status(404);
-          res.render("gta.ejs", {taglist : geoTagModule.getGeoTagObject()});
-      } else {
-          res.status(200);
-          res.render("gta.ejs", {taglist : geoTagModule.getGeoTagObjectAt(req.params.id)});
-      }
-
-  });
-
-    res.render('gta', {
-        taglist: [],
+  res.render("gta", {taglist : inMemoryModule.getGeoTag()});
+    /*res.render('gta', {
+      taglist: [],
         latitude:req.body.latitude,
         longitude:req.body.longitude
-    });
+    });*/
+});
+
+app.get("/geotags/:id", function(req, res) {
+    if( !inMemoryModul.getGeoTagAt(req.params.id) ){
+        res.status(404);
+        res.render("gta", {taglist : inMemoryModule.getGeoTag()});
+    } else {
+        res.status(200);
+        res.render("gta", {taglist : inMemoryModule.getGeoTagAt(req.params.id)});
+    }
+
 });
 
 /**
@@ -168,13 +179,17 @@ app.get('/', function(req, res) {
 
 
   app.post('/tagging', function(req, res) {
-    GeoTagModule.addGeoTag(new GeoTag(req.body.latitude,
+    inMemoryModule.addGeoTag(new GeoTag(req.body.latitude,
                                       req.body.longitude,
                                       req.body.name,
                                       req.body.hashtag));
+    console.log(new GeoTag(req.body.latitude,
+                           req.body.longitude,
+                           req.body.name,
+                           req.body.hashtag));
     res.status(201);
-    res.location('/geotags/' + geoTagModule.getGeoTagObject().length);
-    res.render("gta.ejs", {taglist : geoTagModule.getGeoTagObject()});
+    res.location('/geotags/' + inMemoryModule.getGeoTag().length);
+    res.render("gta.ejs", {taglist : inMemoryModule.getGeoTag()});
     /*InMemoryModul.addGeoTag(new GeoTag(req.body.latitude,
        req.body.longitude, req.body.name,
        req.body.hashtag));
