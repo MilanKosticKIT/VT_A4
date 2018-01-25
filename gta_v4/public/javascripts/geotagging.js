@@ -127,8 +127,8 @@ var gtaLocator = (function GtaLocator() {
 $(document).ready(function () {
     //alert("Hello World")
     //Aufgabe 4.2.1 async
-    document.getElementById("submit-button").onclick = function(){ sendGeoTag(new GeoTag($('#longitude').val(),
-                                                                                         $('#latitude' ).val(),
+    document.getElementById("submit-button").onclick = function(){ sendGeoTag(new GeoTag($('#latitude').val(),
+                                                                                         $('#longitude' ).val(),
                                                                                          $('#name'     ).val(),
                                                                                          $('#hashtag'  ).val())
                                                                                          )};
@@ -184,7 +184,7 @@ function sendGeoTag(geoTag){
     //EventListener
     ajax.onreadystatechange = function() {
       if (ajax.readyState === 4) {
-        console.log("Filtering geoTags wirh this term\" "+ searchterm + "\".");
+        console.log("Filtering geoTags with this term\""+ searchterm + "\".");
       }
     }
 

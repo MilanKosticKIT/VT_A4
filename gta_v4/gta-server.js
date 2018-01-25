@@ -189,6 +189,7 @@ app.get("/geotags/:id", function(req, res) {
                            req.body.hashtag));
     res.status(201);
     res.location('/geotags/' + inMemoryModule.getGeoTag().length);
+
     res.render("gta.ejs", {taglist : inMemoryModule.getGeoTag()});
     /*InMemoryModul.addGeoTag(new GeoTag(req.body.latitude,
        req.body.longitude, req.body.name,
@@ -230,6 +231,7 @@ console.log(req.body.latitude,
              longitude:req.body.hiddenLongitude
          	});
    	}else{
+      console.log("LEER:" + query["searchterm"]);
    		res.render('gta',  {
              taglist: InMemoryModul.geoTagWithinRadius(req.body.hiddenLatitude,
                 req.body.hiddenLongitude, 0.5),
