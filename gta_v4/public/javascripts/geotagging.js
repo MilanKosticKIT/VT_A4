@@ -164,14 +164,13 @@ function sendGeoTag(geoTag){
 }
 
   //Teilaufgabe 4.2.1 filter formular
-  function filterGeoTag(searuchterm) {
+  function filterGeoTag(searchterm) {
     var ajax = new XMLHttpRequest();
 
     if(searchterm == undefined){
       searchterm = "";
     }
-
-    var params = "searchterm = " + searuchterm;
+    var params = "searchterm=" + searchterm;
 
     //EventListener
     ajax.onreadystatechange = function() {

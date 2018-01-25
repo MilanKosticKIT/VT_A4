@@ -184,7 +184,7 @@ console.log(req.body.latitude,
  * Falls 'term' vorhanden ist, wird nach Suchwort gefiltert.
  */
 
-   app.post('/discovery', function(req, res) {
+   app.get('/discovery', function(req, res) {
 
 
 	console.log(
