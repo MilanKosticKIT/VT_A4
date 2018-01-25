@@ -221,6 +221,7 @@ console.log(req.body.latitude,
  */
 
    app.get('/discovery', function(req, res) {
+<<<<<<< current
      var query = url.parse(req.url, true).query;
      console.log(query);
      res.status(201);
@@ -231,7 +232,8 @@ console.log(req.body.latitude,
              longitude:req.body.hiddenLongitude
          	});
    	}else{
-      console.log("LEER:" + query["searchterm"]);
+      console.log("LEER:\”" + query["searchterm"] + "\”");
+        console.log("hiddenLatitude:"+req.body.hiddenLatitude);
    		res.render('gta',  {
              taglist: InMemoryModul.geoTagWithinRadius(req.body.hiddenLatitude,
                 req.body.hiddenLongitude, 0.5),
@@ -241,6 +243,11 @@ console.log(req.body.latitude,
    	}
 
 	/*console.log(
+=======
+
+     console.log("!" + "!");
+	console.log(
+>>>>>>> before discard
     req.body.searchterm,
     req.body.hiddenLatitude,
 		req.body.hiddenLongitude);*/

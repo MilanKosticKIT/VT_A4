@@ -126,6 +126,10 @@ var gtaLocator = (function GtaLocator() {
  */
 $(document).ready(function () {
     //alert("Hello World")
+    //console.log(latitude, longitude);
+      if(latitude === "" || longitude === ""){
+      	gtaLocator.updateLocation();
+      }
     //Aufgabe 4.2.1 async
     document.getElementById("submit-button").onclick = function(){ sendGeoTag(new GeoTag($('#latitude').val(),
                                                                                          $('#longitude' ).val(),
@@ -137,10 +141,7 @@ $(document).ready(function () {
     var latitude = $("#hiddenLatitude").val();
     var longitude = $("#hiddenLongitude").val();
 
-	//console.log(latitude, longitude);
-    if(latitude === "" || longitude === ""){
-    	gtaLocator.updateLocation();
-    }
+
 });
 
 function GeoTag(latitude, longitude, name, hashtag ) {
