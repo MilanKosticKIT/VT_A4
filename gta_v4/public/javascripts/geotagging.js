@@ -153,7 +153,7 @@ function sendGeoTag(geoTag){
           console.log("Sending this to server:");
           console.log(geoTag);
         }
-    }
+    };
     //send data via http post in json to the server
     ajax.open("POST", "/tagging", true);
     ajax.setRequestHeader("Content-type", "application");
