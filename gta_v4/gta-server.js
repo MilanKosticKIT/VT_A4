@@ -13,6 +13,7 @@ var http = require('http');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var express = require('express');
+var url = require("url");
 
 var app;
 app = express();
@@ -185,15 +186,31 @@ console.log(req.body.latitude,
  */
 
    app.get('/discovery', function(req, res) {
+     var query = url.parse(req.url, true).query;
+     console.log(query);
 
+     if(query["searchterm"] != ""){
+   		res.render('gta',  {
+             taglist: InMemoryModul.geoTagSearch(query["searchterm"]),
+             latitude:req.body.hiddenLatitude,
+             longitude:req.body.hiddenLongitude
+         	});
+   	}else{
+   		res.render('gta',  {
+             taglist: InMemoryModul.geoTagWithinRadius(req.body.hiddenLatitude,
+                req.body.hiddenLongitude, 0.5),
+             latitude:req.body.hiddenLatitude,
+             longitude:req.body.hiddenLongitude
+           });
+   	}
 
-	console.log(
+	/*console.log(
     req.body.searchterm,
     req.body.hiddenLatitude,
-		req.body.hiddenLongitude);
+		req.body.hiddenLongitude);*/
 
 
-	if(req.body.searchterm){
+	/*if(req.body.searchterm){
 		res.render('gta',  {
           taglist: InMemoryModul.geoTagSearch(req.body.searchterm),
           latitude:req.body.hiddenLatitude,
@@ -206,7 +223,7 @@ console.log(req.body.latitude,
           latitude:req.body.hiddenLatitude,
           longitude:req.body.hiddenLongitude
         });
-	}
+	}*/
 
   });
 
